@@ -1,0 +1,69 @@
+// PIN MODE //
+int PinLED = A2;
+int PinSpk = A0;
+int PinLSR = A1;
+int PinPowL = 2;
+const int trigPin = 11;
+const int echoPin = 12;
+
+
+// TIMER //
+int DTSen = 100;
+long duration;
+int distance;
+
+///ADJUSTABLE VOLUME ///
+int full = 255;
+int SpkVol = 150;
+int low = 0;
+int SenP = 255;
+
+void setup() {
+pinMode(PinLED, OUTPUT);
+pinMode(PinSpk, OUTPUT);
+pinMode(PinLSR, OUTPUT);
+pinMode(PinPowL, OUTPUT);
+
+pinMode(trigPin, OUTPUT);
+pinMode(echoPin, INPUT);
+
+// STEADY POWER // 
+digitalWrite( PinPowL ,HIGH);
+analogWrite( PinLSR ,full);
+
+Serial.begin(9600);
+}
+
+void alarm(){
+  analogWrite( PinLSR ,low);
+  analogWrite(PinLED, full);
+  analogWrite(PinSpk, SpkVol);
+  delay(DTSen);
+  analogWrite(PinLED, low);
+  analogWrite(PinSpk, low);
+  delay(DTSen);
+  analogWrite( PinLSR ,full);
+
+}
+
+void loop() {
+
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(10);
+
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  int pinTravelTime = pulseIn(echoPin, HIGH);
+  int FinalTime = pinTravelTime/100;
+  delay(25);
+
+  Serial.println(pinTravelTime);
+
+  if (pinTravelTime <= 5000){
+  alarm();
+  }
+  
+
+}
